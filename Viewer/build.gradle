@@ -16,7 +16,6 @@ task fatJar(type:Jar) {
 repositories {
 	jcenter()
 	maven {
-		url "https://mvnrepository.com/artifact/javax.media/jmf"
 		url "https://mvnrepository.com/artifact/org.lwjgl.lwjgl/lwjgl"
 	}
 }

@@ -11,6 +11,7 @@ public class NativeUtils
 		LibraryUtils.load();
 	}
 
+	//JNI methods defined in C++
 	public static native void setTime(double time);
 
 	public static native double getTime();
@@ -23,6 +24,7 @@ public class NativeUtils
 
 	public static native ArrayList<Person> getUnknownPeople();
 	
+	//JNI methods to be called from C++
 	public static long getWindowHandle() {
 		return 0;
 	}
