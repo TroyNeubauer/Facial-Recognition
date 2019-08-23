@@ -1,0 +1,28 @@
+
+plugins {
+    id 'java-library'
+}
+
+//create a single Jar with all dependencies
+task fatJar(type:Jar) {
+	manifest {
+		attributes 'Main-Class': 'com.mt.face.Main'
+	}
+	baseName = project.name + '-all'
+	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+	with jar
+}
+
+repositories {
+	jcenter()
+	maven {
+		url "https://mvnrepository.com/artifact/javax.media/jmf"
+		url "https://mvnrepository.com/artifact/org.lwjgl.lwjgl/lwjgl"
+	}
+}
+
+
+dependencies {
+	compile group: 'org.lwjgl.lwjgl', name: 'lwjgl', version: '2.9.2'
+
+}

@@ -1,0 +1,11 @@
+[Troy Berry] 	OS: Windows 10 v10.0
+[Troy Berry] 	JRE: 12.0.2 amd64
+[Troy Berry] 	JVM: OpenJDK 64-Bit Server VM v12.0.2+10 by AdoptOpenJDK
+[Troy Berry] Attempting to load Facial Recognition native library
+[Troy Berry] No explicit library specified
+[Troy Berry] Attempting to load Facial Recognition native library from java.library.path
+[Troy Berry] Failed to load Facial Recognition native library from java.library.path
+[Troy Berry] Attempting to load Facial Recognition native library from classpath
+[Troy Berry] Failed to load Facial Recognition native library from stream because the stream was null (Classpath)
+[Troy Berry] [SEVERE] Failed to load Facial Recognition native library!!!!
+[Troy Berry] [SEVERE] This will most likley result in errors later when native methods are called!!!
