@@ -59,6 +59,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Imgui.cpp" />
     <ClCompile Include="src\Natives.cpp" />
   </ItemGroup>
   <ItemGroup>
