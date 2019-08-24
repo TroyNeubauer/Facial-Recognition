@@ -34,10 +34,8 @@
 //  2017-08-25: Inputs: MousePos set to -FLT_MAX,-FLT_MAX when mouse is unavailable/missing (instead of -1,-1).
 //  2016-10-15: Misc: Added a void* user_data parameter to Clipboard function handlers.
 
-#include "src/Natives.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
-
 
 #define GLFW_HAS_WINDOW_TOPMOST       (GLFW_VERSION_MAJOR * 1000 + GLFW_VERSION_MINOR * 100 >= 3200) // 3.2+ GLFW_FLOATING
 #define GLFW_HAS_WINDOW_HOVERED       (GLFW_VERSION_MAJOR * 1000 + GLFW_VERSION_MINOR * 100 >= 3300) // 3.3+ GLFW_HOVERED
@@ -48,45 +46,43 @@
 static double               g_Time = 0.0;
 static bool                 g_MouseJustPressed[5] = { false, false, false, false, false };
 
-// Chain GLFW callbacks: our callbacks will call the user's previously installed callbacks, if any.
-static GLFWmousebuttonfun   g_PrevUserCallbackMousebutton = NULL;
-static GLFWscrollfun        g_PrevUserCallbackScroll = NULL;
-static GLFWkeyfun           g_PrevUserCallbackKey = NULL;
-static GLFWcharfun          g_PrevUserCallbackChar = NULL;
-
-char clipboard[1024];
 
 static const char* ImGui_ImplGlfw_GetClipboardText(void* user_data)
 {
-	getClipboard(clipboard, sizeof(clipboard));
-    return clipboard;
+    return glfwGetClipboardString((GLFWwindow*)user_data);
 }
 
 static void ImGui_ImplGlfw_SetClipboardText(void* user_data, const char* text)
 {
-	setClipboard(text);
+    glfwSetClipboardString((GLFWwindow*)user_data, text);
 }
 
-void ImGui_ImplGlfw_MouseButtonCallback(GLFWwindow* window, int button, bool pressed)
+void ImGui_ImplGlfw_MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-    if (pressed && button >= 0 && button < IM_ARRAYSIZE(g_MouseJustPressed))
+
+    if (action == GLFW_PRESS && button >= 0 && button < IM_ARRAYSIZE(g_MouseJustPressed))
         g_MouseJustPressed[button] = true;
 }
 
 void ImGui_ImplGlfw_ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
+    if (g_PrevUserCallbackScroll != NULL)
+        g_PrevUserCallbackScroll(window, xoffset, yoffset);
+
     ImGuiIO& io = ImGui::GetIO();
-    io.MouseWheelH += (float) xoffset;
-    io.MouseWheel += (float) yoffset;
+    io.MouseWheelH += (float)xoffset;
+    io.MouseWheel += (float)yoffset;
 }
 
-void ImGui_ImplGlfw_KeyCallback(GLFWwindow* window, int key, bool pressed)
+void ImGui_ImplGlfw_KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+    if (g_PrevUserCallbackKey != NULL)
+        g_PrevUserCallbackKey(window, key, scancode, action, mods);
 
     ImGuiIO& io = ImGui::GetIO();
-    if (pressed)
+    if (action == GLFW_PRESS)
         io.KeysDown[key] = true;
-	else
+    if (action == GLFW_RELEASE)
         io.KeysDown[key] = false;
 
     // Modifiers are not reliable across systems
@@ -98,6 +94,9 @@ void ImGui_ImplGlfw_KeyCallback(GLFWwindow* window, int key, bool pressed)
 
 void ImGui_ImplGlfw_CharCallback(GLFWwindow* window, unsigned int c)
 {
+    if (g_PrevUserCallbackChar != NULL)
+        g_PrevUserCallbackChar(window, c);
+
     ImGuiIO& io = ImGui::GetIO();
     io.AddInputCharacter(c);
 }
@@ -189,16 +188,21 @@ static void ImGui_ImplGlfw_UpdateMousePosAndButtons()
     // Update mouse position
     const ImVec2 mouse_pos_backup = io.MousePos;
     io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
-    if (isFocused())
+#ifdef __EMSCRIPTEN__
+    const bool focused = true; // Emscripten
+#else
+    const bool focused = glfwGetWindowAttrib(g_Window, GLFW_FOCUSED) != 0;
+#endif
+    if (focused)
     {
         if (io.WantSetMousePos)
         {
-			setCursorPos((double)mouse_pos_backup.x, (double)mouse_pos_backup.y);
+            glfwSetCursorPos(g_Window, (double)mouse_pos_backup.x, (double)mouse_pos_backup.y);
         }
         else
         {
             double mouse_x, mouse_y;
-			getCursorPos(mouse_x, mouse_y);
+            glfwGetCursorPos(g_Window, &mouse_x, &mouse_y);
             io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);
         }
     }
@@ -273,7 +277,7 @@ void ImGui_ImplGlfw_NewFrame()
     // Setup display size (every frame to accommodate for window resizing)
     int w, h;
     int display_w, display_h;
-	getWindowSize(w, h);
+    glfwGetWindowSize(g_Window, &w, &h);
 	display_w = w;
 	display_h = h;
     io.DisplaySize = ImVec2((float)w, (float)h);
