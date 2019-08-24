@@ -2,6 +2,7 @@ package com.mt.face.natives;
 
 import java.util.ArrayList;
 
+import com.mt.face.Person;
 import com.mt.face.util.MiscUtil;
 
 public class NativeUtils

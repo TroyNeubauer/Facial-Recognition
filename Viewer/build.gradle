@@ -15,13 +15,16 @@ task fatJar(type:Jar) {
 
 repositories {
 	jcenter()
-	maven {
+/*	maven {
 		url "https://mvnrepository.com/artifact/org.lwjgl.lwjgl/lwjgl"
-	}
+		url "https://mvnrepository.com/artifact/com.jgoodies/jgoodies-looks"
+		
+	}*/
+	mavenCentral()
 }
 
 
 dependencies {
 	compile group: 'org.lwjgl.lwjgl', name: 'lwjgl', version: '2.9.2'
-
+	compile group: 'com.jgoodies', name: 'jgoodies-looks', version: '2.7.0'
 }

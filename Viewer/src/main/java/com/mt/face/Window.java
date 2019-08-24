@@ -42,6 +42,7 @@ public class Window extends JFrame
 		main = new JPanel();
 		main.setLayout(new BorderLayout());
 		setContentPane(main);
+		setUndecorated(true);
 	
 		panel = new JPanel(new BorderLayout());
 		setSize(1280, 720);
@@ -49,10 +50,32 @@ public class Window extends JFrame
 		renderer = new VideoRenderer();
 		openVideo = new JFileChooser(System.getProperty("user.home") +"/Desktop");
 		open = new JButton("Open a Video");
-		open.addActionListener(new OpenListener());
+		open.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				int x = openVideo.showOpenDialog(null);
+
+				if (x == JFileChooser.APPROVE_OPTION)
+				{
+					URL mediaURL = null;
+					try
+					{
+						mediaURL = openVideo.getSelectedFile().toURL();
+					} catch (MalformedURLException malformedURLException)
+					{
+						System.err.println("Could not create URL for the file");
+					}
+					if (mediaURL != null)
+					{
+						// Player mediaPlayer = Manager.
+					}
+				}
+			}
+		});
+		
 		open.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 40));
-		open.setBackground(ColorScheme.lightBlue);
-		open.setSize(300,300);
+		open.setBackground(ColorScheme.LIGHT_BLUE);
 
 		panel.add(open, BorderLayout.NORTH);
 		panel.add(canvas, BorderLayout.CENTER);
@@ -60,12 +83,10 @@ public class Window extends JFrame
 		
 		knownModel = new DefaultListModel<>();
 		unknownModel = new DefaultListModel<>();
-		
 		known = new JList<>(knownModel);
 		known.setCellRenderer(new PersonRenderer());
 		unknown = new JList<>(unknownModel);
 		unknown.setCellRenderer(new PersonRenderer());
-		
 		main.add(new JScrollPane(known), BorderLayout.WEST);
 		main.add(new JScrollPane(unknown), BorderLayout.EAST);
 		
@@ -73,33 +94,64 @@ public class Window extends JFrame
 		north.setLayout(new BorderLayout());
 		JLabel knownFaces = new JLabel ("Known Faces");
 		knownFaces.setOpaque(true);
-		//knownFaces.setSize(100,20);
 		knownFaces.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 40));
-		knownFaces.setBackground(ColorScheme.skyBlue);
+		knownFaces.setBackground(ColorScheme.SKY_BLUE);
 		north.add(knownFaces, BorderLayout.WEST);
 		JLabel unknownFaces = new JLabel("Unknown Faces");
 		unknownFaces.setOpaque(true);
-		//unknownFaces.setSize(100,20);
 		unknownFaces.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 40));
-		unknownFaces.setBackground(ColorScheme.skyBlue);
+		unknownFaces.setBackground(ColorScheme.SKY_BLUE);
 		north.add(unknownFaces, BorderLayout.EAST);
 		main.add(north, BorderLayout.NORTH);
 
 		JPanel south = new JPanel();
 		south.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		JButton export = new JButton();
-		export.addActionListener(new ExportListener());
+		export.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				  BufferedWriter writer = null;
+				    try {
+				        writer = new BufferedWriter(new FileWriter("./output.txt"));
+				        for(Person p: exportPeople())
+				        	writer.write(p.toString() + "\n");
+				        	
+				    } catch (IOException e1) {
+				        System.err.println(e1);
+				    } finally {
+				        if (writer != null) {
+				            try {
+				                writer.close();
+				            } catch (IOException e2) {
+				                System.err.println(e2);
+				            }
+				        }
+				    }
+				
+			}
+		});
+
 		export.setText("Export");
 		export.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 40));
 		export.setOpaque(true);
-		export.setBackground(ColorScheme.lightTurquoise);
+		export.setBackground(ColorScheme.LIGHT_TURQUOISE);
 		south.add(export);
 		JButton exit = new JButton();
-		exit.addActionListener(new ExitListener());
+		
+		exit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				System.exit(0);
+					
+			}
+		});
+		
 		exit.setText("Exit");
 		exit.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 40));
 		exit.setOpaque(true);
-		exit.setBackground(ColorScheme.lightTurquoise);
+		exit.setBackground(ColorScheme.LIGHT_TURQUOISE);
 		south.add(exit);
 		main.add(south, BorderLayout.SOUTH);
 		
@@ -157,70 +209,5 @@ public class Window extends JFrame
 			exportPeople.add(unknownModel.getElementAt(i));
 		}
 		return exportPeople;
-	}
-	
-	private class OpenListener implements ActionListener
-	{
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			int x = openVideo.showOpenDialog(null);
-
-			if (x == JFileChooser.APPROVE_OPTION)
-			{
-				URL mediaURL = null;
-				try
-				{
-					mediaURL = openVideo.getSelectedFile().toURL();
-				} catch (MalformedURLException malformedURLException)
-				{
-					System.err.println("Could not create URL for the file");
-				}
-				if (mediaURL != null)
-				{
-					// Player mediaPlayer = Manager.
-				}
-			}
-		}
-	}
-	
-	private class ExportListener implements ActionListener
-	{
-
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			  BufferedWriter writer = null;
-			    try {
-			        writer = new BufferedWriter(new FileWriter("./output.txt"));
-			        for(Person p: exportPeople())
-			        	writer.write(p.toString() + "\n");
-			        	
-			    } catch (IOException e1) {
-			        System.err.println(e1);
-			    } finally {
-			        if (writer != null) {
-			            try {
-			                writer.close();
-			            } catch (IOException e2) {
-			                System.err.println(e2);
-			            }
-			        }
-			    }
-			
-		}
-		
-	}
-	
-	private class ExitListener implements ActionListener
-	{
-
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			System.exit(0);
-			
-		}
-		
 	}
 }

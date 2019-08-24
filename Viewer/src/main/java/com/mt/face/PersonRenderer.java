@@ -16,8 +16,15 @@ public class PersonRenderer extends JPanel implements ListCellRenderer<Person>
 		goToFirstSeen.setText(person.getFirstTime() + "");
 		goToFirstSeen.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
 		goToFirstSeen.setOpaque(true);
-		goToFirstSeen.setBackground(ColorScheme.lightTurquoise);
-		goToFirstSeen.addActionListener(new FaceListener());
+		goToFirstSeen.setBackground(ColorScheme.LIGHT_TURQUOISE);
+		goToFirstSeen.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				//go to the video at the time this person was first seen
+				System.out.println("the button is working");
+			}
+		});
 		JLabel face = new JLabel();
 		face.setIcon(person.getFace());
 		JLabel name = new JLabel();
@@ -31,17 +38,4 @@ public class PersonRenderer extends JPanel implements ListCellRenderer<Person>
 		add(east, BorderLayout.EAST);
 		return this;
 	}
-	
-	private class FaceListener implements ActionListener
-	{
-
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			//go to the video at the time this person was first seen
-			System.out.println("the button is working");
-		}
-		
-	}
-	
 }
