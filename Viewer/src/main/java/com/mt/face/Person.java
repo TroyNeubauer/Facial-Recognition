@@ -10,6 +10,7 @@ public class Person
 	private ImageIcon face;
 	private double firstSeen;
 	private boolean known;
+//	private long id;
 	
 	//each person object has the videoFile which they are first seen in as an attribute?
 	private String videoFile;

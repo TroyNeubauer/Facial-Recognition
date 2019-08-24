@@ -15,7 +15,7 @@ task fatJar(type:Jar) {
 
 repositories {
 	jcenter()
-/*	maven {
+	/*maven {
 		url "https://mvnrepository.com/artifact/org.lwjgl.lwjgl/lwjgl"
 		url "https://mvnrepository.com/artifact/com.jgoodies/jgoodies-looks"
 		
