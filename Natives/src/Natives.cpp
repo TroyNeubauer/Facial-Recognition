@@ -2,19 +2,29 @@
 
 #include "jni.h"
 #include <stdio.h>
-#include "..\Natives.h"
+#include "Natives.h"
+#include <string.h>
 
 extern "C" {
 	jclass nativeUtils;
 	JNIEnv* env;
 
+	JNIEXPORT void JNICALL Java_com_mt_face_NativeUtils_init(JNIEnv* jniEnv, jclass cls)
+	{
+		nativeUtils = cls;
+		env = jniEnv;
+	}
+
 	JNIEXPORT void JNICALL Java_com_mt_face_NativeUtils_setTime(JNIEnv* env, jclass cls, jdouble time)
 	{
-		
+		char c[128];
+		getClipboard(c, sizeof(c));
+		printf("CB: %s\n", c);
 	}
 
 	JNIEXPORT jdouble JNICALL Java_com_mt_face_NativeUtils_getTime(JNIEnv* env, jclass cls)
 	{
+		return 0.0;
 	}
 
 
@@ -29,55 +39,64 @@ extern "C" {
 
 	JNIEXPORT jobject JNICALL Java_com_mt_face_NativeUtils_getKnownPeople(JNIEnv* env, jclass cls)
 	{
+		return nullptr;
 	}
 
 	JNIEXPORT jobject JNICALL Java_com_mt_face_NativeUtils_getUnknownPeople(JNIEnv* env, jclass cls)
 	{
-	}
-
-	void* getWindowHandle()
-	{
 		return nullptr;
 	}
+}
 
-	void getClipboard(char* buf, int length)
-	{
-	}
+void* getWindowHandle()
+{
+	return nullptr;
+}
 
-	void setClipboard(char* clipboard)
-	{
-	}
+jboolean isCopy;
 
-	bool isFocused()
-	{
-		return false;
-	}
+void getClipboard(char* buf, int length)
+{
+	static jmethodID mid = env->GetStaticMethodID(nativeUtils, "getClipboard", "()Ljava/lang/String;");
+	jstring string = (jstring)env->CallStaticObjectMethod(nativeUtils, mid);
+	const char* result = env->GetStringUTFChars(string, &isCopy);
+	strncpy(buf, result, length);
+	env->ReleaseStringUTFChars(string, result);
+}
 
-	
-	bool isMouseButtonDown()
-	{
-		return false;
-	}
+void setClipboard(char* clipboard)
+{
+	static jmethodID mid = env->GetStaticMethodID(nativeUtils, "setClipboard", "()Ljava/lang/String;");
+	jstring string = env->NewStringUTF(clipboard);
 
-	void getCursorPos(double& x, double& y)
-	{
-	}
+	env->CallStaticVoidMethod(nativeUtils, mid, string);
+	env->ReleaseStringChars(string, clipboard);
+}
 
-	void setCursorPos(double x, double y)
-	{
-	}
-
-	void getWindowSize(double& x, double& y)
-	{
-	}
-
-	double getApplicationTime()
-	{
-		return 0.0;
-	}
+bool isFocused()
+{
+	return false;
+}
 
 
+bool isMouseButtonDown()
+{
+	return false;
+}
 
+void getCursorPos(double& x, double& y)
+{
+}
 
+void setCursorPos(double x, double y)
+{
+}
 
+void getWindowSize(int& x, int& y)
+{
+}
+
+double getApplicationTime()
+{
+	return 0.0;
 }

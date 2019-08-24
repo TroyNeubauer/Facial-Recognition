@@ -1,21 +1,19 @@
 package com.mt.face;
 
+import static org.lwjgl.opengl.GL11.*;
+
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileSystemView;
 
 import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.Display;
 
-import static org.lwjgl.opengl.GL11.*;
+import com.mt.face.natives.NativeUtils;
 
 public class Window extends JFrame
 {
@@ -157,7 +155,7 @@ public class Window extends JFrame
 		
 		setVisible(true);
 
-/*		try
+		try
 		{
 			Display.setParent(canvas);
 			Display.create();
@@ -165,7 +163,8 @@ public class Window extends JFrame
 		{
 			e.printStackTrace();
 		}
-		*/
+		
+		NativeUtils.init();
 	}
 
 	public boolean isOpen()

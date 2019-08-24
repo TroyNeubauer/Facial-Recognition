@@ -9,6 +9,8 @@ import com.jgoodies.looks.plastic.theme.Silver;
 
 public class Main
 {
+	public static Window window;
+	
 	public static void main(String[] args)
 	{
 		try { 
