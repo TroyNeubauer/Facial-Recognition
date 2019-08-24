@@ -14,7 +14,7 @@ public class PersonRenderer extends JPanel implements ListCellRenderer<Person>
 		setLayout(new BorderLayout());
 		JButton goToFirstSeen = new JButton();
 		goToFirstSeen.setText(person.getFirstTime() + "");
-		goToFirstSeen.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
+		goToFirstSeen.setFont(Window.HELVETICA_SMALL);
 		goToFirstSeen.setOpaque(true);
 		goToFirstSeen.setBackground(ColorScheme.LIGHT_TURQUOISE);
 		goToFirstSeen.addActionListener(new ActionListener() {
@@ -29,7 +29,7 @@ public class PersonRenderer extends JPanel implements ListCellRenderer<Person>
 		face.setIcon(person.getFace());
 		JLabel name = new JLabel();
 		name.setText(person.getName());
-		name.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
+		name.setFont(Window.HELVETICA_SMALL);
 		add(face, BorderLayout.WEST);
 		JPanel east = new JPanel();
 		east.setLayout(new BorderLayout());

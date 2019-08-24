@@ -16,6 +16,7 @@ task fatJar(type:Jar) {
 repositories {
 	jcenter()
 	/*maven {
+		url " https://mvnrepository.com/artifact/org.pushing-pixels/radiance-substance"
 		url "https://mvnrepository.com/artifact/org.lwjgl.lwjgl/lwjgl"
 		url "https://mvnrepository.com/artifact/com.jgoodies/jgoodies-looks"
 		
@@ -26,5 +27,5 @@ repositories {
 
 dependencies {
 	compile group: 'org.lwjgl.lwjgl', name: 'lwjgl', version: '2.9.2'
-	compile group: 'com.jgoodies', name: 'jgoodies-looks', version: '2.7.0'
+	compile group: 'org.pushing-pixels', name: 'radiance-substance', version: '2.0.1'
 }

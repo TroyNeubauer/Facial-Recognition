@@ -1,11 +1,13 @@
 package com.mt.face;
 
+import java.awt.EventQueue;
+
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 
-import com.jgoodies.looks.plastic.PlasticLookAndFeel;
-import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
-import com.jgoodies.looks.plastic.theme.Silver;
+import org.pushingpixels.substance.api.skin.SubstanceGraphiteGlassLookAndFeel;
+
+
 
 public class Main
 {
@@ -13,18 +15,22 @@ public class Main
 	
 	public static void main(String[] args)
 	{
-		try { 
-		    //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			PlasticLookAndFeel.setPlasticTheme(new Silver());
-	        UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
-		//	UIManager.setLookAndFeel("com.jgoodies.looks.windows.WindowsLookAndFeel");
-		} catch (Exception e) {
-		    e.printStackTrace();
-		}
-		
-		Window window = new Window();
-		Person mahi = new Person("Mahi Nair", new ImageIcon("MahiFace.jpg"), 0.00, true, "NOVIDEO");
-		window.addPerson(mahi);
+
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					
+					UIManager.setLookAndFeel(new SubstanceGraphiteGlassLookAndFeel());
+		            Window window = new Window();
+		            Person mahi = new Person("Mahi Nair", new ImageIcon("MahiFace.jpg"), 0.00, true, "NOVIDEO");
+					window.addPerson(mahi);
+		            window.setVisible(true);
+		            } 
+				catch (Exception e) {
+		                e.printStackTrace();
+		            }
+		        }
+		});
 		/*while (window.isOpen())
 		{
 			window.update();

@@ -9,6 +9,8 @@ import java.net.*;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -17,20 +19,28 @@ import com.mt.face.natives.NativeUtils;
 
 public class Window extends JFrame
 {
-	private JPanel panel;
+	private JPanel video;
 	private VideoRenderer renderer;
 	private JPanel main;
 	private JButton open;
 	private JFileChooser openVideo;
+	private JSlider videoSlider;
 	private JList<Person> known;
 	private JList<Person> unknown;
 	private DefaultListModel<Person> knownModel;
 	private DefaultListModel<Person> unknownModel;
+	private JButton playAndPause;
+	private boolean isPaused = false;
+
+	private ImageIcon pause = new ImageIcon(new ImageIcon("pause.png").getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH));
+	private ImageIcon play = new ImageIcon(new ImageIcon("play.png").getImage().getScaledInstance(70,  70, Image.SCALE_SMOOTH));
 
 	//trying to use these to fulfill the "which video is x face from"
 	private String[] fileNames;
 	private int i = 0;
 
+	public static final Font HELVETICA_LARGE = new Font(Font.SANS_SERIF, Font.PLAIN, 40);
+	public static final Font HELVETICA_SMALL = new Font(Font.SANS_SERIF, Font.PLAIN, 20);
 
 	public Window()
 	{
@@ -42,7 +52,7 @@ public class Window extends JFrame
 		setContentPane(main);
 		setUndecorated(true);
 	
-		panel = new JPanel(new BorderLayout());
+		video = new JPanel(new BorderLayout());
 		setSize(1280, 720);
 		Canvas canvas = new Canvas();
 		renderer = new VideoRenderer();
@@ -72,12 +82,55 @@ public class Window extends JFrame
 			}
 		});
 		
-		open.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 40));
+		open.setFont(HELVETICA_LARGE);
 		open.setBackground(ColorScheme.LIGHT_BLUE);
+		
+		JPanel videoControls = new JPanel();
+		videoControls.setLayout(new FlowLayout());
+		playAndPause = new JButton();
+		playAndPause.setIcon(pause);
+		playAndPause.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(isPaused)
+				{
+					playAndPause.setIcon(pause);
+					NativeUtils.play();
+					isPaused = false;
+				}
+				else
+				{
+					playAndPause.setIcon(play);
+					NativeUtils.pause();
+					isPaused = true;
+				}	
+			}	
+		});
+		
+		videoControls.add(playAndPause);
+		videoSlider = new JSlider(SwingConstants.HORIZONTAL, 0 , 100, 0);
+		videoSlider.setPaintTicks(true);
+        videoSlider.setPaintLabels(true);
+        videoSlider.setPreferredSize(new Dimension(500, 30));
+        videoSlider.setMajorTickSpacing(20);
+        videoSlider.setMinorTickSpacing(5);
+		videoSlider.addChangeListener(new ChangeListener() {
+			 public void stateChanged(ChangeEvent e) {
+			        JSlider source = (JSlider) e.getSource();
+			        int currentValue = source.getValue();
+			        if (!source.getValueIsAdjusting()) {
+			            System.out.println("VAL: " + currentValue);
+			           //this method needs to put the video at whatever time the user clicks
+			        }
+			    }
+		});
+		
+		videoControls.add(videoSlider);
 
-		panel.add(open, BorderLayout.NORTH);
-		panel.add(canvas, BorderLayout.CENTER);
-		main.add(panel, BorderLayout.CENTER);
+		video.add(open, BorderLayout.NORTH);
+		video.add(canvas, BorderLayout.CENTER);
+		video.add(videoControls, BorderLayout.SOUTH);
+		main.add(video, BorderLayout.CENTER);
 		
 		knownModel = new DefaultListModel<>();
 		unknownModel = new DefaultListModel<>();
@@ -92,12 +145,12 @@ public class Window extends JFrame
 		north.setLayout(new BorderLayout());
 		JLabel knownFaces = new JLabel ("Known Faces");
 		knownFaces.setOpaque(true);
-		knownFaces.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 40));
+		knownFaces.setFont(HELVETICA_LARGE);
 		knownFaces.setBackground(ColorScheme.SKY_BLUE);
 		north.add(knownFaces, BorderLayout.WEST);
 		JLabel unknownFaces = new JLabel("Unknown Faces");
 		unknownFaces.setOpaque(true);
-		unknownFaces.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 40));
+		unknownFaces.setFont(HELVETICA_LARGE);
 		unknownFaces.setBackground(ColorScheme.SKY_BLUE);
 		north.add(unknownFaces, BorderLayout.EAST);
 		main.add(north, BorderLayout.NORTH);
@@ -131,7 +184,7 @@ public class Window extends JFrame
 		});
 
 		export.setText("Export");
-		export.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 40));
+		export.setFont(HELVETICA_LARGE);
 		export.setOpaque(true);
 		export.setBackground(ColorScheme.LIGHT_TURQUOISE);
 		south.add(export);
@@ -147,7 +200,7 @@ public class Window extends JFrame
 		});
 		
 		exit.setText("Exit");
-		exit.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 40));
+		exit.setFont(HELVETICA_LARGE);
 		exit.setOpaque(true);
 		exit.setBackground(ColorScheme.LIGHT_TURQUOISE);
 		south.add(exit);
