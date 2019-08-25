@@ -28,4 +28,6 @@ repositories {
 dependencies {
 	compile group: 'org.lwjgl.lwjgl', name: 'lwjgl', version: '2.9.2'
 	compile group: 'org.pushing-pixels', name: 'radiance-substance', version: '2.0.1'
+	compile group: 'org.lwjgl', name: 'lwjgl', version: '3.2.2'
+
 }

@@ -5,6 +5,9 @@
 #include "Natives.h"
 #include <string.h>
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+
 extern "C" {
 	jclass nativeUtils;
 	JNIEnv* env;
@@ -13,16 +16,37 @@ extern "C" {
 	{
 		nativeUtils = cls;
 		env = jniEnv;
-	}
-
-	JNIEXPORT void JNICALL Java_com_mt_face_NativeUtils_setTime(JNIEnv* env, jclass cls, jdouble time)
-	{
 		char c[128];
 		getClipboard(c, sizeof(c));
 		printf("CB: %s\n", c);
 	}
 
-	JNIEXPORT jdouble JNICALL Java_com_mt_face_NativeUtils_getTime(JNIEnv* env, jclass cls)
+	JNIEXPORT void JNICALL Java_com_mt_face_NativeUtils_onMouseEvent(JNIEnv* env, jclass cls, jint button, jboolean press)
+	{
+		ImGui_ImplGlfw_MouseButtonCallback(button, press);
+	}
+	
+	JNIEXPORT void JNICALL Java_com_mt_face_NativeUtils_onKeyEvent(JNIEnv* env, jclass cls, jint key, jboolean press)
+	{
+		ImGui_ImplGlfw_KeyCallback(key, press);
+	}
+	
+	JNIEXPORT void JNICALL Java_com_mt_face_NativeUtils_onChar(JNIEnv* env, jclass cls, jchar c)
+	{
+		ImGui_ImplGlfw_CharCallback(c);
+	}
+
+	JNIEXPORT void JNICALL Java_com_mt_face_NativeUtils_onScrollEvent(JNIEnv* env, jclass cls, jdouble x, jdouble y)
+	{
+		ImGui_ImplGlfw_ScrollCallback(x, y);
+	}
+
+	JNIEXPORT void JNICALL Java_com_mt_face_NativeUtils_setVideoTime(JNIEnv* env, jclass cls, jdouble time)
+	{
+		
+	}
+
+	JNIEXPORT jdouble JNICALL Java_com_mt_face_NativeUtils_getVideoTime(JNIEnv* env, jclass cls)
 	{
 		return 0.0;
 	}
@@ -50,7 +74,8 @@ extern "C" {
 
 void* getWindowHandle()
 {
-	return nullptr;
+	static jmethodID mid = env->GetStaticMethodID(nativeUtils, "getWindowHandle", "()J");
+	return (void*) env->CallStaticLongMethod(nativeUtils, mid);
 }
 
 jboolean isCopy;
@@ -66,37 +91,43 @@ void getClipboard(char* buf, int length)
 
 void setClipboard(char* clipboard)
 {
-	static jmethodID mid = env->GetStaticMethodID(nativeUtils, "setClipboard", "()Ljava/lang/String;");
-	jstring string = env->NewStringUTF(clipboard);
-
-	env->CallStaticVoidMethod(nativeUtils, mid, string);
-	env->ReleaseStringChars(string, clipboard);
+	static jmethodID mid = env->GetStaticMethodID(nativeUtils, "setClipboard", "(J)V");
+	env->CallStaticVoidMethod(nativeUtils, mid, (jlong) clipboard);
 }
 
 bool isFocused()
 {
-	return false;
+	static jmethodID mid = env->GetStaticMethodID(nativeUtils, "isFocused", "()V");
+	return env->CallStaticBooleanMethod(nativeUtils, mid);
 }
 
 
-bool isMouseButtonDown()
+bool isMouseButtonDown(int button)
 {
-	return false;
+	static jmethodID mid = env->GetStaticMethodID(nativeUtils, "isMouseButtonDown", "(I)V");
+	return env->CallStaticBooleanMethod(nativeUtils, mid, button);
 }
 
 void getCursorPos(double& x, double& y)
 {
+	static jmethodID mid = env->GetStaticMethodID(nativeUtils, "getCursorPos", "(JJ)V");
+	env->CallStaticVoidMethod(nativeUtils, mid, (jlong) &x, (jlong) &y);
 }
 
 void setCursorPos(double x, double y)
 {
+	static jmethodID mid = env->GetStaticMethodID(nativeUtils, "setCursorPos", "(DD)V");
+	env->CallStaticVoidMethod(nativeUtils, mid, x, y);
 }
 
 void getWindowSize(int& x, int& y)
 {
+	static jmethodID mid = env->GetStaticMethodID(nativeUtils, "getWindowSize", "(JJ)V");
+	env->CallStaticVoidMethod(nativeUtils, mid, (jlong)& x, (jlong)& y);
 }
 
 double getApplicationTime()
 {
-	return 0.0;
+	static jmethodID mid = env->GetStaticMethodID(nativeUtils, "getApplicationTime", "()D");
+	return env->CallStaticDoubleMethod(nativeUtils, mid);
 }

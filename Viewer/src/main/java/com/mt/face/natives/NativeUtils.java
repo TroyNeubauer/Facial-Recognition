@@ -2,9 +2,10 @@ package com.mt.face.natives;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.*;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.lwjgl.input.Mouse;
+import org.lwjgl.system.MemoryUtil;
 
 import com.mt.face.*;
 import com.mt.face.util.MiscUtil;
@@ -19,9 +20,9 @@ public class NativeUtils
 	// JNI methods defined in C++
 	public static native void init();
 	
-	public static native void setTime(double time);
+	public static native void setVideoTime(double time);
 
-	public static native double getTime();
+	public static native double getVideoTime();
 
 	public static native void play();
 
@@ -56,10 +57,9 @@ public class NativeUtils
 		return "<Error Reading Clipboard>";
 	}
 
-	public static void setClipboard(String text)
+	public static void setClipboard(long text)
 	{
-		StringSelection selection = new StringSelection(text);
-		NativeUtils.clipboard.setContents(selection, null);
+		NativeUtils.clipboard.setContents(new StringSelection(MemoryUtil.memUTF8(text)), null);
 	}
 
 	public static boolean isFocused()
