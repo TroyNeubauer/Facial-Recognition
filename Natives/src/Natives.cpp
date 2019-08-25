@@ -89,7 +89,7 @@ void getClipboard(char* buf, int length)
 	env->ReleaseStringUTFChars(string, result);
 }
 
-void setClipboard(char* clipboard)
+void setClipboard(const char* clipboard)
 {
 	static jmethodID mid = env->GetStaticMethodID(nativeUtils, "setClipboard", "(J)V");
 	env->CallStaticVoidMethod(nativeUtils, mid, (jlong) clipboard);

@@ -37,6 +37,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "Natives.h"
+#include "JavaKeys.h"
 
 static double               g_Time = 0.0;
 static bool                 g_MouseJustPressed[5] = { false, false, false, false, false };
@@ -62,10 +63,10 @@ void ImGui_ImplGlfw_KeyCallback(int key, bool pressed)
 	io.KeysDown[key] = pressed;
     
     // Modifiers are not reliable across systems
-    io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
-    io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
-    io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
-    io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
+    io.KeyCtrl = io.KeysDown[JAVA_CONTROL]/* || io.KeysDown[GLFW_KEY_RIGHT_CONTROL]*/;
+    io.KeyShift = io.KeysDown[JAVA_SHIFT]/* || io.KeysDown[GLFW_KEY_RIGHT_SHIFT]*/;
+    io.KeyAlt = io.KeysDown[JAVA_ALT]/* || io.KeysDown[GLFW_KEY_RIGHT_ALT]*/;
+    io.KeySuper = io.KeysDown[JAVA_SUPER]/* || io.KeysDown[GLFW_KEY_RIGHT_SUPER]*/;
 }
 
 void ImGui_ImplGlfw_CharCallback(unsigned int c)
@@ -85,37 +86,50 @@ static bool ImGui_ImplGlfw_Init()
     io.BackendPlatformName = "imgui_impl_glfw";
 
     // Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
-    io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
-    io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
-    io.KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;
-    io.KeyMap[ImGuiKey_UpArrow] = GLFW_KEY_UP;
-    io.KeyMap[ImGuiKey_DownArrow] = GLFW_KEY_DOWN;
-    io.KeyMap[ImGuiKey_PageUp] = GLFW_KEY_PAGE_UP;
-    io.KeyMap[ImGuiKey_PageDown] = GLFW_KEY_PAGE_DOWN;
-    io.KeyMap[ImGuiKey_Home] = GLFW_KEY_HOME;
-    io.KeyMap[ImGuiKey_End] = GLFW_KEY_END;
-    io.KeyMap[ImGuiKey_Insert] = GLFW_KEY_INSERT;
-    io.KeyMap[ImGuiKey_Delete] = GLFW_KEY_DELETE;
-    io.KeyMap[ImGuiKey_Backspace] = GLFW_KEY_BACKSPACE;
-    io.KeyMap[ImGuiKey_Space] = GLFW_KEY_SPACE;
-    io.KeyMap[ImGuiKey_Enter] = GLFW_KEY_ENTER;
-    io.KeyMap[ImGuiKey_Escape] = GLFW_KEY_ESCAPE;
-    io.KeyMap[ImGuiKey_KeyPadEnter] = GLFW_KEY_KP_ENTER;
-    io.KeyMap[ImGuiKey_A] = GLFW_KEY_A;
-    io.KeyMap[ImGuiKey_C] = GLFW_KEY_C;
-    io.KeyMap[ImGuiKey_V] = GLFW_KEY_V;
-    io.KeyMap[ImGuiKey_X] = GLFW_KEY_X;
-    io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
-    io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
+    io.KeyMap[ImGuiKey_Tab] = JAVA_TAB;
+    io.KeyMap[ImGuiKey_LeftArrow] = JAVA_LEFT;
+    io.KeyMap[ImGuiKey_RightArrow] = JAVA_RIGHT;
+    io.KeyMap[ImGuiKey_UpArrow] = JAVA_UP;
+    io.KeyMap[ImGuiKey_DownArrow] = JAVA_DOWN;
+    io.KeyMap[ImGuiKey_PageUp] = JAVA_PAGE_UP;
+    io.KeyMap[ImGuiKey_PageDown] = JAVA_PAGE_DOWN;
+    io.KeyMap[ImGuiKey_Home] = JAVA_HOME;
+    io.KeyMap[ImGuiKey_End] = JAVA_END;
+    io.KeyMap[ImGuiKey_Insert] = JAVA_INSERT;
+    io.KeyMap[ImGuiKey_Delete] = JAVA_DELETE;
+    io.KeyMap[ImGuiKey_Backspace] = JAVA_BACKSPACE;
+    io.KeyMap[ImGuiKey_Space] = JAVA_SPACE;
+    io.KeyMap[ImGuiKey_Enter] = JAVA_ENTER;
+    io.KeyMap[ImGuiKey_Escape] = JAVA_ESCAPE;
+    io.KeyMap[ImGuiKey_KeyPadEnter] = JAVA_ENTER;
+    io.KeyMap[ImGuiKey_A] = JAVA_A;
+    io.KeyMap[ImGuiKey_C] = JAVA_C;
+    io.KeyMap[ImGuiKey_V] = JAVA_V;
+    io.KeyMap[ImGuiKey_X] = JAVA_X;
+    io.KeyMap[ImGuiKey_Y] = JAVA_Y;
+    io.KeyMap[ImGuiKey_Z] = JAVA_Z;
 
     io.SetClipboardTextFn = ImGui_ImplGlfw_SetClipboardText;
     io.GetClipboardTextFn = ImGui_ImplGlfw_GetClipboardText;
-    io.ClipboardUserData = g_Window;
 #if defined(_WIN32)
-    io.ImeWindowHandle = (void*)glfwGetWin32Window(g_Window);
+	
+	io.ImeWindowHandle = getWindowHandle();
 #endif
 
     return true;
+}
+
+void		ImGui_ImplGlfw_SetClipboardText(void* user_data, const char* text)
+{
+	setClipboard(text);
+}
+
+char clipboard[1024];
+const char* ImGui_ImplGlfw_GetClipboardText(void* user_data)
+{
+	getClipboard(clipboard, sizeof(clipboard));
+
+	return clipboard;
 }
 
 bool ImGui_ImplGlfw_InitForOpenGL()

@@ -38,6 +38,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor\Glad\include;vendor\imgui;C:\Program Files\Java\jdk1.8.0_211\include;C:\Program Files\Java\jdk1.8.0_211\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -57,8 +58,12 @@
       <AdditionalDependencies>Pdh.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>..\bin\Release-windows-x86_64\Natives\FR.lib</ImportLibrary>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST ..\bin\Release-windows-x86_64\Natives\FR.dll\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Natives\FR.dll Viewer\native &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Natives\FR.dll Viewer\native &gt; nul)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\JavaKeys.h" />
     <ClInclude Include="src\Natives.h" />
     <ClInclude Include="src\imgui_impl_glfw.h" />
     <ClInclude Include="src\imgui_impl_opengl3.h" />

@@ -30,3 +30,6 @@ IMGUI_IMPL_API void     ImGui_ImplGlfw_MouseButtonCallback(int button, bool pres
 IMGUI_IMPL_API void     ImGui_ImplGlfw_ScrollCallback(double xoffset, double yoffset);
 IMGUI_IMPL_API void     ImGui_ImplGlfw_KeyCallback(int key, bool pressed);
 IMGUI_IMPL_API void     ImGui_ImplGlfw_CharCallback(unsigned int c);
+
+IMGUI_IMPL_API void		ImGui_ImplGlfw_SetClipboardText(void* user_data, const char* text);
+IMGUI_IMPL_API const char* ImGui_ImplGlfw_GetClipboardText(void* user_data);

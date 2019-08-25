@@ -22,7 +22,7 @@ extern "C" {
 
 void* getWindowHandle();
 void getClipboard(char* buf, int length);
-void setClipboard(char* clipboard);
+void setClipboard(const char* clipboard);
 bool isFocused();
 bool isMouseButtonDown(int button);
 

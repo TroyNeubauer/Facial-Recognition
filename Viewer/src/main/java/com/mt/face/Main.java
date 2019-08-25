@@ -2,11 +2,9 @@ package com.mt.face;
 
 import java.awt.EventQueue;
 
-import javax.swing.ImageIcon;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import org.pushingpixels.substance.api.skin.SubstanceGraphiteGlassLookAndFeel;
-
 
 
 public class Main
@@ -19,7 +17,6 @@ public class Main
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					
 					UIManager.setLookAndFeel(new SubstanceGraphiteGlassLookAndFeel());
 		            Window window = new Window();
 		            Person mahi = new Person("Mahi Nair", new ImageIcon("MahiFace.jpg"), 0.00, true, "NOVIDEO");
