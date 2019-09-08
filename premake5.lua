@@ -12,12 +12,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["Glad"] = "Natives/vendor/Glad/include"
-IncludeDir["ImGui"] = "Natives/vendor/imgui"
 
 JDKHome = os.getenv("JDK_HOME")
 
 include "Natives/vendor/Glad"
-include "Natives/vendor/imgui"
 
 project "Natives"
 	location "Natives"
@@ -37,22 +35,20 @@ project "Natives"
 
 	files
 	{
-		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/src/*.h",
+		"%{prj.name}/src/*.cpp",
 	}
 
 	includedirs
 	{
 		"%{prj.name}/src",
 		"%{IncludeDir.Glad}",
-		"%{IncludeDir.ImGui}",
 		JDKHome.."/include",
 	}
 
 	links 
 	{ 
 		"Glad",
-		"ImGui",
 	}
 
 	defines

@@ -55,6 +55,7 @@ void ImGui_ImplGlfw_ScrollCallback(double xoffset, double yoffset)
     ImGuiIO& io = ImGui::GetIO();
     io.MouseWheelH += (float)xoffset;
     io.MouseWheel += (float)yoffset;
+	JavaPrint("wheel %f, xo %f", io.MouseWheel, yoffset);
 }
 
 void ImGui_ImplGlfw_KeyCallback(int key, bool pressed)
@@ -113,21 +114,21 @@ static bool ImGui_ImplGlfw_Init()
     io.GetClipboardTextFn = ImGui_ImplGlfw_GetClipboardText;
 #if defined(_WIN32)
 	
-	io.ImeWindowHandle = getWindowHandle();
+	io.ImeWindowHandle = GetWindowHandle();
 #endif
 
     return true;
 }
 
-void		ImGui_ImplGlfw_SetClipboardText(void* user_data, const char* text)
+void ImGui_ImplGlfw_SetClipboardText(void* user_data, const char* text)
 {
-	setClipboard(text);
+	SetClipboard(text);
 }
 
 char clipboard[1024];
 const char* ImGui_ImplGlfw_GetClipboardText(void* user_data)
 {
-	getClipboard(clipboard, sizeof(clipboard));
+	GetClipboard(clipboard, sizeof(clipboard));
 
 	return clipboard;
 }
@@ -154,7 +155,7 @@ static void ImGui_ImplGlfw_UpdateMousePosAndButtons()
     for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++)
     {
         // If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
-        io.MouseDown[i] = g_MouseJustPressed[i] || isMouseButtonDown(i);
+        io.MouseDown[i] = g_MouseJustPressed[i] || IsMouseButtonDown(i);
 		
         g_MouseJustPressed[i] = false;
     }
@@ -165,18 +166,18 @@ static void ImGui_ImplGlfw_UpdateMousePosAndButtons()
 #ifdef __EMSCRIPTEN__
     const bool focused = true; // Emscripten
 #else
-	const bool focused = isFocused();
+	const bool focused = IsFocused();
 #endif
     if (focused)
     {
         if (io.WantSetMousePos)
         {
-			setCursorPos((double)mouse_pos_backup.x, (double)mouse_pos_backup.y);
+			SetCursorPos((double)mouse_pos_backup.x, (double)mouse_pos_backup.y);
         }
         else
         {
             double mouse_x, mouse_y;
-			getCursorPos(mouse_x, mouse_y);
+			GetCursorPos(&mouse_x, &mouse_y);
             io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);
         }
     }
@@ -243,26 +244,21 @@ static void ImGui_ImplGlfw_UpdateGamepads()
 */
 }
 
-void ImGui_ImplGlfw_NewFrame()
+void ImGui_ImplGlfw_NewFrame(int width, int height)
 {
     ImGuiIO& io = ImGui::GetIO();
     IM_ASSERT(io.Fonts->IsBuilt() && "Font atlas not built! It is generally built by the renderer back-end. Missing call to renderer _NewFrame() function? e.g. ImGui_ImplOpenGL3_NewFrame().");
 
-    // Setup display size (every frame to accommodate for window resizing)
-    int w, h;
-	getWindowSize(w, h);
-    io.DisplaySize = ImVec2((float)w, (float)h);
-    if (w > 0 && h > 0)
+    io.DisplaySize = ImVec2((float) width, (float) height);
+    if (width > 0 && height > 0)
         io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
 
     // Setup time step
-	double current_time = getApplicationTime();
+	double current_time = GetApplicationTime();
     io.DeltaTime = g_Time > 0.0 ? (float)(current_time - g_Time) : (float)(1.0f/60.0f);
     g_Time = current_time;
-
     ImGui_ImplGlfw_UpdateMousePosAndButtons();
-    ImGui_ImplGlfw_UpdateMouseCursor();
-
+	ImGui_ImplGlfw_UpdateMouseCursor();
     // Update game controllers (if enabled and available)
     ImGui_ImplGlfw_UpdateGamepads();
 }

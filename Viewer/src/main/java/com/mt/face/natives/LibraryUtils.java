@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.zip.*;
 
+import org.apache.commons.io.FileUtils;
+
 import com.mt.face.util.*;
 
 public class LibraryUtils
@@ -19,6 +21,13 @@ public class LibraryUtils
 		InternalLog.println("\tOS: " + System.getProperty("os.name") + " v" + System.getProperty("os.version"));
 		InternalLog.println("\tJRE: " + System.getProperty("java.version") + " " + System.getProperty("os.arch"));
 		InternalLog.println("\tJVM: " + System.getProperty("java.vm.name") + " v" + System.getProperty("java.vm.version") + " by " + System.getProperty("java.vm.vendor"));
+		InternalLog.println();
+		
+		if (System.getProperty("isIDE").equals("true"))
+		{
+			System.setProperty("java.library.path", System.getProperty("java.library.path") + File.pathSeparatorChar + new File("./native/").getAbsolutePath());
+			copyDynamicLib();
+		}
 
 		InternalLog.println("Attempting to load Facial Recognition native library");
 		try
@@ -34,11 +43,13 @@ public class LibraryUtils
 					InternalLog.println("Facial Recognition is running inside jar file: " + file);
 					loadFromJarFile(file);
 				}
-			} catch (Throwable t)
+			}
+			catch (Throwable t)
 			{
 				InternalLog.println("Failed to load Facial Recognition native library from jar file!\n" + MiscUtil.getStackTrace(t));
 			}
-		} catch (Throwable t)
+		}
+		catch (Throwable t)
 		{
 			loaded = false;
 		}
@@ -49,12 +60,12 @@ public class LibraryUtils
 			System.err.println("[Facial Recognition] [SEVERE] Failed to load Facial Recognition native library");
 			InternalLog.dump();
 		}
+		
 	}
 
 	private static boolean loadFromClassPath()
 	{
-		if (loaded)
-			return true;
+		if (loaded) return true;
 		InternalLog.println("Attempting to load Facial Recognition native library from classpath");
 		InputStream stream = Class.class.getResourceAsStream(REAL_LIBRARY_NAME);
 		loadFromStream(stream, "Classpath");
@@ -63,12 +74,12 @@ public class LibraryUtils
 
 	private static void loadFromExplictFile()
 	{
-		if (loaded)
-			return;
+		if (loaded) return;
 		if (System.getProperty(LIBRARY_FILE_OVERRIDE) == null)
 		{
 			InternalLog.println("No explicit library specified");
-		} else
+		}
+		else
 		{
 			String value = System.getProperty(LIBRARY_FILE_OVERRIDE);
 			InternalLog.println("Attempting to load file " + value);
@@ -76,14 +87,16 @@ public class LibraryUtils
 			{
 				System.load(value);
 				InternalLog.println("Successfully loaded native lib from file: " + value + "!");
-			} catch (Exception e)
+			}
+			catch (Exception e)
 			{
 				InternalLog.println("Unable to load native lib from file: " + value + " Error " + MiscUtil.getStackTrace(e));
 				InternalLog.println("Re-trying with java streams");
 				try
 				{
 					loadFromStream(new FileInputStream(new File(value)), "File-JavaIO");
-				} catch (FileNotFoundException e1)
+				}
+				catch (FileNotFoundException e1)
 				{
 					InternalLog.println("Unable to load native lib from file: " + value + " using java io. Error " + MiscUtil.getStackTrace(e));
 				}
@@ -93,8 +106,7 @@ public class LibraryUtils
 
 	private static void loadFromStream(InputStream stream, String method)
 	{
-		if (loaded)
-			return;
+		if (loaded) return;
 		if (stream != null)
 		{
 			File libraryFile;
@@ -102,7 +114,8 @@ public class LibraryUtils
 			{
 				libraryFile = File.createTempFile(LIBRARY_NAME, null);// Create a temp file to copy the native lib
 																		// inside the jar to
-			} catch (Throwable t)
+			}
+			catch (Throwable t)
 			{
 				throw new UnsatisfiedLinkError(
 						"Unable to load libary " + REAL_LIBRARY_NAME + " from stream because the temp directory creation failed(" + method + ")\"\n" + MiscUtil.getStackTrace(t));
@@ -115,7 +128,8 @@ public class LibraryUtils
 				dest.getChannel().force(true);// To ensure that System.load() doesn't get angry that "another process is
 												// using the file..."
 				dest.close();
-			} catch (Throwable t)
+			}
+			catch (Throwable t)
 			{
 				throw new UnsatisfiedLinkError(
 						"Unable to load libary " + REAL_LIBRARY_NAME + " from stream because copying to the temp file failed!(" + method + ")\"\n" + MiscUtil.getStackTrace(t));
@@ -123,7 +137,8 @@ public class LibraryUtils
 			try
 			{
 				System.load(libraryFile.getAbsolutePath());// Give the temp file to System.load to attempt to load it
-			} catch (Throwable t)
+			}
+			catch (Throwable t)
 			{
 				throw new UnsatisfiedLinkError("Unable to load libary " + REAL_LIBRARY_NAME + " from stream!\n" + MiscUtil.getStackTrace(t));
 			}
@@ -132,7 +147,8 @@ public class LibraryUtils
 			libraryFile.deleteOnExit();// Delete the temp file when we exit because we don't want to delete it when
 										// System.load() is reading from
 										// it
-		} else
+		}
+		else
 		{
 			InternalLog.println("Failed to load Facial Recognition native library from stream because the stream was null (" + method + ")");
 		}
@@ -140,8 +156,7 @@ public class LibraryUtils
 
 	private static void loadFromJarFile(File file)
 	{
-		if (loaded)
-			return;
+		if (loaded) return;
 		InternalLog.println("Attempting to load Facial Recognition native library from jar file");
 		try
 		{
@@ -158,7 +173,8 @@ public class LibraryUtils
 			loadFromStream(zip.getInputStream(entry), "Jar File");// Now get the input stream for reading the library
 																	// and use it to load it
 			zip.close();
-		} catch (Throwable e)
+		}
+		catch (Throwable e)
 		{
 			InternalLog.println("Failed to load Facial Recognition native library from jar file " + file + "\n" + MiscUtil.getStackTrace(e));
 		}
@@ -166,15 +182,15 @@ public class LibraryUtils
 
 	private static boolean loadFromJavaLibPath()
 	{
-		if (loaded)
-			return true;
+		if (loaded) return true;
 		InternalLog.println("Attempting to load Facial Recognition native library from java.library.path");
 		try
 		{
 			System.loadLibrary(LIBRARY_NAME);
 			loaded = true;
 			InternalLog.println("Successfully loaded Facial Recognition native library from java.library.path");
-		} catch (Throwable t)
+		}
+		catch (Throwable t)
 		{
 			InternalLog.println("Failed to load Facial Recognition native library from java.library.path");
 		}
@@ -188,5 +204,37 @@ public class LibraryUtils
 	public static void load()
 	{
 		// Empty to call static initializer
+	}
+
+	private static void copyDynamicLib()
+	{
+		InternalLog.println("Attempting to copy FR dynamic library");
+		copyFile(new File("../bin/"));
+	}
+
+	private static void copyFile(File file)
+	{
+		if (file.isDirectory())
+		{
+			for (File child : file.listFiles())
+			{
+				copyFile(child);
+			}
+		}
+		else
+		{
+			if (file.getName().equals(System.mapLibraryName("FR")))
+			{
+				InternalLog.println("Copying file " + file);
+				try
+				{
+					FileUtils.copyFile(file, new File("./native/", file.getName()));
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }

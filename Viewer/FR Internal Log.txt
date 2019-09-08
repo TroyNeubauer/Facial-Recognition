@@ -1,6 +1,9 @@
 [Troy Berry] 	OS: Windows 10 v10.0
-[Troy Berry] 	JRE: 12.0.2 amd64
-[Troy Berry] 	JVM: OpenJDK 64-Bit Server VM v12.0.2+10 by AdoptOpenJDK
+[Troy Berry] 	JRE: 1.8.0_211 amd64
+[Troy Berry] 	JVM: Java HotSpot(TM) 64-Bit Server VM v25.211-b12 by Oracle Corporation
+
+[Troy Berry] Attempting to copy FR dynamic library
+[Troy Berry] Copying file ..\bin\Release-windows-x86_64\Natives\FR.dll
 [Troy Berry] Attempting to load Facial Recognition native library
 [Troy Berry] No explicit library specified
 [Troy Berry] Attempting to load Facial Recognition native library from java.library.path

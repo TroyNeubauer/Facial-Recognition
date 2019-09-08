@@ -22,7 +22,7 @@
 IMGUI_IMPL_API bool     ImGui_ImplGlfw_InitForOpenGL();
 IMGUI_IMPL_API bool     ImGui_ImplGlfw_InitForVulkan();
 IMGUI_IMPL_API void     ImGui_ImplGlfw_Shutdown();
-IMGUI_IMPL_API void     ImGui_ImplGlfw_NewFrame();
+IMGUI_IMPL_API void     ImGui_ImplGlfw_NewFrame(int width, int height);
 
 // InitXXX function with 'install_callbacks=true': install GLFW callbacks. They will call user's previously installed callbacks, if any.
 // InitXXX function with 'install_callbacks=false': do not install GLFW callbacks. You will need to call them yourself from your own GLFW callbacks.

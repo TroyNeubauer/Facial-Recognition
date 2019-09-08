@@ -1,0 +1,9 @@
+﻿  imgui.cpp
+  imgui_demo.cpp
+C:\Facial Recognition\Natives\src\Natives.h(2,10): error C1083:  Cannot open include file: 'jni.h': No such file or directory
+  imgui_draw.cpp
+C:\Facial Recognition\Natives\src\Natives.h(2,10): error C1083:  Cannot open include file: 'jni.h': No such file or directory
+  imgui_widgets.cpp
+C:\Facial Recognition\Natives\src\Natives.h(2,10): error C1083:  Cannot open include file: 'jni.h': No such file or directory
+  Generating Code...
+C:\Facial Recognition\Natives\src\Natives.h(2,10): error C1083:  Cannot open include file: 'jni.h': No such file or directory

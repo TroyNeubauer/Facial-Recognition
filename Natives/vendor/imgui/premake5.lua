@@ -10,8 +10,13 @@ project "ImGui"
 
 	files
 	{
-		"./*.h",
-		"./*.cpp"
+		"**.h",
+		"**.cpp"
+	}
+
+	includedirs
+	{
+		"../../src",
 	}
 	
 
